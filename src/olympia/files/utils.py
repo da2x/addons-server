@@ -432,7 +432,9 @@ class ManifestJSONExtractor(object):
     def type(self):
         return (
             amo.ADDON_LPAPP if 'langpack_id' in self.data
-            else amo.ADDON_STATICTHEME if 'theme' in self.data
+            else amo.ADDON_STATICTHEME if any(
+                theme_type in self.data for theme_type in
+                ('theme', 'dark_theme'))
             else amo.ADDON_DICT if 'dictionaries' in self.data
             else amo.ADDON_EXTENSION
         )

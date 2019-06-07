@@ -347,7 +347,7 @@ class TestManifestJSONExtractor(AppVersionsMixin, TestCase):
     def test_is_webextension(self):
         assert self.parse({})['is_webextension']
 
-    def test_allow_static_theme_waffle(self):
+    def test_detect_static_theme(self):
         manifest = utils.ManifestJSONExtractor(
             '/fake_path', '{"theme": {}}').parse()
 
@@ -355,7 +355,15 @@ class TestManifestJSONExtractor(AppVersionsMixin, TestCase):
 
         assert self.parse({'theme': {}})['type'] == amo.ADDON_STATICTHEME
 
-    def test_langpack(self):
+    def test_detect_static_theme_dark_theme(self):
+        manifest = utils.ManifestJSONExtractor(
+            '/fake_path', '{"theme": {}}').parse()
+
+        utils.check_xpi_info(manifest)
+
+        assert self.parse({'dark_theme': {}})['type'] == amo.ADDON_STATICTHEME
+
+    def test_detect_langpack(self):
         self.create_appversion('firefox', '60.0')
         self.create_appversion('firefox', '60.*')
         self.create_appversion('android', '60.0')
@@ -383,7 +391,7 @@ class TestManifestJSONExtractor(AppVersionsMixin, TestCase):
         assert apps[0].min.version == '60.0'
         assert apps[0].max.version == '60.*'
 
-    def test_dictionary(self):
+    def test_detect_dictionary(self):
         self.create_appversion('firefox', '61.0')
         data = {
             'applications': {
